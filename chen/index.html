@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<!-- saved from url=(0057)http://webaudiodemos.appspot.com/AudioRecorder/index.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Audio Recorder</title>
+
+	<script src="./js/audiodisplay.js"></script><style type="text/css"></style>
+	<script src="./js/recorder.js"></script>
+	<script src="./js/main.js"></script>
+	<style>
+	html { overflow: hidden; }
+	body { 
+		font: 14pt Arial, sans-serif; 
+		background: lightgrey;
+		display: flex;
+		flex-direction: column;
+		height: 100vh;
+		width: 100%;
+		margin: 0 0;
+	}
+	</style>
+</head>
+<body>
+	
+    <input onclick="startRecording()" type="button" value="start recording" />
+    <input onclick="stopRecording()" id="save" type="button" value="stop recording and play" />
+
+<script>
+window.AudioContext = window.AudioContext || window.webkitAudioContext;
+navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia ||
+            navigator.mozGetUserMedia || navigator.msGetUserMedia;
+
+var recorder = null;
+var stream = null;
+var audio = document.querySelector('audio');
+
+
+function startRecording(){
+    if (navigator.getUserMedia){
+    navigator.getUserMedia({audio:true}, success, function(e) {
+            alert('Error getting audio');
+            console.log(e);
+        });        
+    }
+}
+
+function saveRecording(blob){
+	recorder.setupDownload()
+}
+
+function stopRecording(){
+    recorder.stop();
+    recorder.exportWAV(function(s) {
+	    Recorder.setupDownload = function(blob){
+	    var url = (window.URL || window.webkitURL).createObjectURL(blob);
+	    var link = document.getElementById("save");
+	    link.href = url;
+	    link.download = 'output.wav';
+	  }
+    });
+}
+
+var success = function(s){
+    var context = new webkitAudioContext();
+    var mediaStreamSource = new context.createMediaStreamSource(context);
+    recorder = new Recorder();
+    stream = s;
+    recorder.record();
+}
+
+</script>
+</body></html>
