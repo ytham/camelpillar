@@ -27,9 +27,13 @@
 
 <script>
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
+navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia ||
+            navigator.mozGetUserMedia || navigator.msGetUserMedia;
 
 var recorder = null;
 var stream = null;
+var audio = document.querySelector('audio');
+
 
 function startRecording(){
     if (navigator.getUserMedia){
@@ -47,13 +51,6 @@ function stopRecording(){
     });
 }
 
-function initAudio() {
-        if (!navigator.getUserMedia)
-            navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia ||
-            navigator.mozGetUserMedia || navigator.msGetUserMedia;
-    
-}
-
 var success = function(s){
     var context = new webkitAudioContext();
     var mediaStreamSource = new context.createMediaStreamSource(context);
@@ -62,6 +59,5 @@ var success = function(s){
     recorder.record();
 }
 
-window.addEventListener('load', initAudio );
 </script>
 </body></html>
