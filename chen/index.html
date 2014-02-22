@@ -21,8 +21,47 @@
 	</style>
 </head>
 <body>
-	<div id="controls">
-		<a id="save" href="http://webaudiodemos.appspot.com/AudioRecorder/index.html#">RECORD</a>
-	</div>
+	
+    <input onclick="startRecording()" type="button" value="start recording" />
+    <input onclick="stopRecording()" type="button" value="stop recording and play" />
 
-<iframe id="rdbIndicator" width="100%" height="270" border="0" src="./index_files/indicator.html" style="display: none; border: 0; position: fixed; left: 0; top: 0; z-index: 2147483647"></iframe></body></html>
+<script>
+window.AudioContext = window.AudioContext || window.webkitAudioContext;
+
+var recorder = null;
+var stream = null;
+
+function startRecording(){
+    if (navigator.getUserMedia){
+    navigator.getUserMedia({audio:true}, success, function(e) {
+            alert('Error getting audio');
+            console.log(e);
+        });        
+    }
+}
+
+function stopRecording(){
+    recorder.stop();
+    recorder.exportWAV(function(s) {
+        audio.src = window.URL.createObjectURL(s);
+    });
+}
+
+function initAudio() {
+        if (!navigator.getUserMedia)
+            navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia ||
+            navigator.mozGetUserMedia || navigator.msGetUserMedia;
+    
+}
+
+var success = function(s){
+    var context = new webkitAudioContext();
+    var mediaStreamSource = new context.createMediaStreamSource(context);
+    recorder = new Recorder();
+    stream = s;
+    recorder.record();
+}
+
+window.addEventListener('load', initAudio );
+</script>
+</body></html>
