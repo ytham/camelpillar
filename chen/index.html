@@ -44,10 +44,19 @@ function startRecording(){
     }
 }
 
+function saveRecording(blob){
+	recorder.setupDownload()
+}
+
 function stopRecording(){
     recorder.stop();
     recorder.exportWAV(function(s) {
-        audio.src = window.URL.createObjectURL(s);
+	    Recorder.setupDownload = function(blob){
+	    var url = (window.URL || window.webkitURL).createObjectURL(blob);
+	    var link = document.getElementById("save");
+	    link.href = url;
+	    link.download = 'output.wav';
+	  }
     });
 }
 
