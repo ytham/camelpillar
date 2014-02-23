@@ -3,7 +3,8 @@
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<meta name="viewport" content="width=device-width,initial-scale=1">
 	<title>Audio Recorder</title>
-
+  <script src = "/socket.io/socket.io.js"></script>
+  <!--<script src="http://cdn.binaryjs.com/0/binary.js"></script>-->
 	<script src="./js/recorderjs/recorder.js"></script>
 	<style>
 	html { overflow: hidden; }
@@ -17,6 +18,7 @@
 		margin: 0 0;
 	}
 	</style>
+
 </head>
 <body>
 	
@@ -24,6 +26,12 @@
     <input onclick="stopRecording()" id="save" type="button" value="stop recording and play" />
 
 <script>
+var socket = io.connect();
+var url = document.write(location.href);
+
+
+//var client = new BinaryClient('ws://localhost:9000');
+
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia ||
             navigator.mozGetUserMedia || navigator.msGetUserMedia;
@@ -52,9 +60,34 @@ function download(blob){
     var link = document.getElementById("save");
     link.href = url;
     console.log("url" + url);
-	console.log("link" + link);
-	console.log("href" + link.href);
+	  console.log("link" + link);
+	  console.log("href" + link.href);
     link.download = 'output.wav';
+
+    var reader = new window.FileReader();
+    reader.readAsDataURL(blob);
+    reader.onloadend = function () {
+      base64data = reader.result;
+      console.log(base64data);
+      socket.emit("audio", base64data);
+    }
+
+    console.log(blob);
+    var b64blob = btoa(blob);
+    console.log(b64blob);
+    
+
+    // Post the data
+    /*var method = "POST";
+    var async = true;
+    var request = new XMLHttpRequest();
+    request.onload = function () {
+       var status = request.status; 
+       var data = request.responseText; 
+    }
+    request.open(method, url, async);
+    request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    request.send(blob);*/
 }
 
 var success = function(s){
@@ -68,5 +101,5 @@ var success = function(s){
 </script>
 </body>
 
-<script src = "/socket.io/socket.io.js"></script>
+
 </html>
