@@ -42,9 +42,42 @@ io.sockets.on('connection', function (socket) {
     data = new Buffer(data, 'base64');
     fs.writeFile("testdata.wav", data, "binary", function () {
       console.log("File write complete");
+
+      var options = {
+        hostname: 'http://developer.echonest.com/api/v4/track/upload?api_key=D28CDJNXBWXV63EDM&filetype=wav',
+        port: 80,
+        path: '/upload',
+        method: 'POST'
+      };
+
+      var req = http.request(options, )
+
       ecg({file: "testdata.wav"}, function (err, data) {
         if (err) return console.error(err);
-        console.log(data.code); // {"metadata":{...}, "code_count": 4098, "code": "eJzFn..."}
+        //console.log(data.code); // {"metadata":{...}, "code_count": 4098, "code": "eJzFn..."}
+
+        var reqUrl = "http://developer.echonest.com/api/v4/song/identify?api_key=D28CDJNXBWXV63EDM&version=4.2&code=" + data.code;
+        http.get(reqUrl, function (res) {
+          res.on('data', function (chunk) {
+            chunk = JSON.parse(chunk);
+            console.log(chunk);
+            var songId = chunk.response.songs[0].id;
+
+            var reqUrl2 = "http://developer.echonest.com/api/v4/track/profile?api_key=D28CDJNXBWXV63EDM&format=json&id=" + songId + "&bucket=audio_summary";
+            http.get(reqUrl2, function (res) {
+              res.on('data', function (chunk) {
+                chunk = JSON.parse(chunk);
+                console.log(chunk);
+                var tempo = chunk.response.track.audio_summary.tempo;
+                console.log("FUCK YEAH: " + tempo);
+              });
+            }).on('error', function(e) {
+              console.log("Got error: " + e.message);
+            });
+          });
+        }).on('error', function(e) {
+          console.log("Got error: " + e.message);
+        });
       });
     });
   });
