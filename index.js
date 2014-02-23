@@ -18,7 +18,7 @@ var numSamples = 110250,  // Number of samples to read from file (30 seconds)
     bufferSize = numSamples * bytesPerSample,
     buffer = new Buffer(bufferSize);
 
-ecg({file: 'test.wav'}, function (err, data) {
+ecg({file: 'mjtest2.wav'}, function (err, data) {
   if (err) return console.error(err);
-  console.log(data); // {"metadata":{...}, "code_count": 4098, "code": "eJzFn..."}
+  console.log(data.code); // {"metadata":{...}, "code_count": 4098, "code": "eJzFn..."}
 });
